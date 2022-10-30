@@ -7,6 +7,7 @@ const PORT = process.env.PORT;
 const MONGO_DB_URL = process.env.MONGO_URL;
 const User = require("./model/User");
 
+// connecting the database
 mongoose
   .connect(`mongodb://localhost:27017/${MONGO_DB_URL}`, {
     useNewUrlParser: true,
@@ -14,6 +15,8 @@ mongoose
   })
   .then(() => console.log(`connected to DATABASE`));
 const routes = () => {
+
+  // searching the data base for all users
   router.get("/users", async (req, res) => {
     try {
       const users = await User.find();
@@ -24,6 +27,7 @@ const routes = () => {
     }
   });
 
+  //adding new user
   router.post("/users", (req, res) => {
     try {
       const user = new User({
@@ -32,13 +36,14 @@ const routes = () => {
         email: "talebyousra63@gmail.com",
       });
       // saving our new created instances
-      const savedUser = User.save();
+      const savedUser = user.save();
       res.status(201).send(savedUser);
     } catch (err) {
       res.status(err.status).send(err.message);
     }
   });
-
+  
+  //updating user
   router.put("/users/:id", (req, res) => {
     try {
       const user = User.findOneAndUpdate({ _id: req.params.id }, req.body, {
@@ -50,6 +55,8 @@ const routes = () => {
       res.status(500).send(err.message);
     }
   });
+
+  //deleting one user by id
   router.delete("/users/:id", (req, res) => {
     try {
       User.deleteOne({ _id: req.params.id });
